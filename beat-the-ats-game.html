@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beat the ATS — CareerMap x Navriti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#4F46E5; --indigo-dark:#3730A3; --green:#0F9D6B; --amber:#F59E0B; --red:#E4483C;
+    --bg:#F8FAFC; --card:#FFFFFF; --ink:#1E1B2E; --ink-soft:#5B5670; --line:#E4E1F0; --track:#DCE3FA;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; background:
+      radial-gradient(1200px 500px at 10% -10%, #EEF0FE 0%, transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, #E8FBF3 0%, transparent 55%), var(--bg);
+    font-family:'Inter',sans-serif; color:var(--ink); display:flex; justify-content:center; padding:28px 16px 60px;
+  }
+  .app{width:100%; max-width:760px;}
+  h1,h2,h3{font-family:'Sora',sans-serif; margin:0;}
+  .brand{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  .brand-left{display:flex; align-items:center; gap:10px;}
+  .brand-badge{width:34px; height:34px; border-radius:10px; background:var(--indigo); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-family:'Sora',sans-serif;}
+  .brand-name{font-weight:700; font-size:15px; color:var(--indigo-dark);}
+  .brand-sub{font-size:11px; color:var(--ink-soft); letter-spacing:.03em;}
+  .navbar{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+  .nav-btn{
+    border:1.5px solid var(--line); background:#fff; border-radius:10px; padding:7px 12px;
+    font-size:12.5px; font-weight:600; cursor:pointer; color:var(--ink-soft); font-family:'Inter',sans-serif;
+  }
+  .nav-btn:hover{border-color:var(--indigo); color:var(--indigo);}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:28px 26px; box-shadow:0 12px 32px -18px rgba(79,70,229,.25);}
+  .title-block{text-align:center; margin-bottom:22px;}
+  .title-block h1{font-size:26px; letter-spacing:-.01em;}
+  .title-block p{color:var(--ink-soft); font-size:14px; margin-top:8px; line-height:1.5;}
+  .name-input{
+    width:100%; padding:14px 16px; border:1.5px solid var(--line); border-radius:12px;
+    font-size:15px; font-family:'Inter',sans-serif; margin-top:6px; margin-bottom:16px;
+  }
+  .name-input:focus{outline:none; border-color:var(--indigo);}
+  .roles{display:grid; gap:12px; margin-top:20px;}
+  .role-btn{display:flex; align-items:center; gap:14px; text-align:left; border:1.5px solid var(--line); background:#fff; border-radius:14px; padding:14px 16px; cursor:pointer; transition:transform .12s ease, border-color .12s ease, box-shadow .12s ease;}
+  .role-btn:hover{border-color:var(--indigo); transform:translateY(-2px); box-shadow:0 10px 22px -14px rgba(79,70,229,.5);}
+  .role-emoji{font-size:26px;}
+  .role-name{font-weight:700; font-size:15px;}
+  .role-desc{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+  .progress-row{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .progress-track{flex:1; height:8px; background:var(--track); border-radius:99px; overflow:hidden;}
+  .progress-fill{height:100%; background:linear-gradient(90deg,var(--indigo),var(--green)); border-radius:99px; transition:width .35s ease;}
+  .progress-label{font-size:12px; color:var(--ink-soft); white-space:nowrap; font-weight:600;}
+  .section-eyebrow{font-size:12px; font-weight:700; color:var(--indigo); text-transform:uppercase; letter-spacing:.08em;}
+  .section-q{font-size:19px; margin-top:6px; margin-bottom:18px;}
+  .options{display:grid; gap:12px;}
+  .opt{border:1.5px solid var(--line); border-radius:14px; padding:14px 16px; cursor:pointer; transition:all .15s ease; background:#fff;}
+  .opt:hover{border-color:var(--indigo); background:#F5F4FF;}
+  .opt-text{font-size:14.5px; line-height:1.5;}
+  .scan-wrap{text-align:center; padding:10px 0 4px;}
+  .pipeline{display:flex; align-items:center; justify-content:center; margin:34px 0 10px; flex-wrap:wrap;}
+  .stage{display:flex; flex-direction:column; align-items:center; width:88px;}
+  .stage-circle{width:56px; height:56px; border-radius:50%; border:2px solid var(--track); display:flex; align-items:center; justify-content:center; font-size:22px; background:#fff; transition:all .4s ease; color:var(--track);}
+  .stage-circle.active{border-color:var(--indigo); color:var(--indigo); box-shadow:0 0 0 6px #EEF0FE; transform:scale(1.08);}
+  .stage-circle.done{border-color:var(--green); color:var(--green); background:#EAFBF4;}
+  .stage-label{font-size:11px; margin-top:8px; color:var(--ink-soft); font-weight:600; text-align:center;}
+  .stage-arrow{color:var(--track); font-size:18px; margin:0 2px; transition:color .3s ease;}
+  .stage-arrow.done{color:var(--green);}
+  .scan-status{font-size:14px; color:var(--ink-soft); margin-top:14px; min-height:20px;}
+  .verdict{border-radius:16px; padding:18px 20px; text-align:center; margin-bottom:20px;}
+  .verdict.good{background:#EAFBF4; border:1.5px solid var(--green);}
+  .verdict.mid{background:#FFF7E8; border:1.5px solid var(--amber);}
+  .verdict.bad{background:#FDECEA; border:1.5px solid var(--red);}
+  .verdict-title{font-family:'Sora',sans-serif; font-weight:800; font-size:20px;}
+  .verdict.good .verdict-title{color:var(--green);}
+  .verdict.mid .verdict-title{color:#B9790A;}
+  .verdict.bad .verdict-title{color:var(--red);}
+  .verdict-sub{font-size:13px; color:var(--ink-soft); margin-top:4px;}
+  .score-big{font-family:'Sora',sans-serif; font-size:44px; font-weight:800; margin:6px 0;}
+  .breakdown{display:grid; gap:10px; margin-bottom:18px;}
+  .b-row{display:flex; align-items:center; gap:10px;}
+  .b-label{width:96px; font-size:12.5px; font-weight:600; color:var(--ink-soft); flex-shrink:0;}
+  .b-track{flex:1; height:9px; background:var(--track); border-radius:99px; overflow:hidden;}
+  .b-fill{height:100%; border-radius:99px; transition:width .6s ease;}
+  .b-pts{width:38px; font-size:12px; text-align:right; color:var(--ink-soft); font-weight:600;}
+  .tips{background:#F5F4FF; border-radius:14px; padding:16px 18px; margin-bottom:20px;}
+  .tips h3{font-size:14px; margin-bottom:10px;}
+  .tips li{font-size:13px; line-height:1.6; color:var(--ink);}
+  .btn-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .btn{border:none; border-radius:12px; padding:13px 20px; font-family:'Inter',sans-serif; font-weight:700; font-size:14px; cursor:pointer; transition:transform .1s ease;}
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--indigo); color:#fff;}
+  .btn-ghost{background:#fff; border:1.5px solid var(--line); color:var(--ink);}
+  .footer-pill{margin-top:26px; background:var(--green); color:#fff; text-align:center; padding:9px 14px; border-radius:99px; font-size:11.5px; font-weight:600;}
+  /* simulator */
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line);}
+  .toggle-row:last-child{border-bottom:none;}
+  .toggle-label{font-size:14px; font-weight:600;}
+  .toggle-sub{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .switch{width:52px; height:30px; border-radius:99px; background:var(--track); position:relative; cursor:pointer; flex-shrink:0; transition:background .2s ease;}
+  .switch.on{background:var(--green);}
+  .switch-knob{position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:left .2s ease; box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .switch.on .switch-knob{left:25px;}
+  .gauge-wrap{text-align:center; margin:22px 0;}
+  .gauge-score{font-family:'Sora',sans-serif; font-size:48px; font-weight:800; transition:color .3s ease;}
+  .gauge-track{height:14px; background:var(--track); border-radius:99px; overflow:hidden; margin-top:10px;}
+  .gauge-fill{height:100%; border-radius:99px; transition:width .35s ease, background .35s ease;}
+  .gauge-verdict{font-size:13.5px; font-weight:700; margin-top:10px;}
+  /* leaderboard */
+  .lb-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .lb-table th{text-align:left; color:var(--ink-soft); font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; padding-bottom:8px; border-bottom:1.5px solid var(--line);}
+  .lb-table td{padding:9px 4px; border-bottom:1px solid var(--line);}
+  .lb-table tr.me td{background:#F5F4FF; font-weight:700;}
+  .lb-rank{width:28px; color:var(--ink-soft); font-weight:700;}
+  .qr-box{text-align:center;}
+  .qr-box img{border-radius:14px; border:1.5px solid var(--line); margin:16px 0;}
+  .url-box{background:#F5F4FF; border-radius:10px; padding:10px 14px; font-size:12.5px; word-break:break-all; color:var(--indigo-dark); margin-bottom:14px;}
+  @media (max-width:480px){
+    .stage{width:64px;} .stage-circle{width:44px; height:44px; font-size:18px;}
+    .stage-label{font-size:9.5px;} .stage-arrow{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand">
+    <div class="brand-left">
+      <div class="brand-badge">🎓</div>
+      <div><div class="brand-name">CareerMap</div><div class="brand-sub">by Navriti Technologies</div></div>
+    </div>
+    <div class="brand-sub">Beat the ATS</div>
+  </div>
+  <div class="navbar" id="navbar"></div>
+  <div class="card" id="cardRoot"></div>
+  <div class="footer-pill">Presented by Navriti Technologies · 14+ Years in EdTech · 2M+ Skill Assessments · 700+ Districts</div>
+</div>
+
+<script>
+/* ======== CONFIG — paste your Google Apps Script Web App URL here ======== */
+const CONFIG = {
+  SHEET_API_URL: "https://script.google.com/macros/s/AKfycbxSdHq6FIYYbWeeus96xR6sgDGPdAccD7JU-H-Qp-XQAcm0ro1xSHjbXbhCSuaxTGzB/exec"
+};
+const SHEET_CONFIGURED = !CONFIG.SHEET_API_URL.includes("PASTE_YOUR");
+
+const ROLES = [
+  { id:'data', emoji:'📊', name:'Data Analyst', desc:'Build a resume for a Data Analyst role and see how it scores.',
+    sections:[
+      { label:'Summary', options:[
+        {t:"Hardworking person looking for a good job in data.", pts:5, note:"Too vague — no keywords, no proof of skill."},
+        {t:"Analyst experienced with data and reporting tools.", pts:15, note:"Some relevant terms, but no numbers or specifics."},
+        {t:"Data Analyst skilled in SQL, Python, and Power BI, with a track record of turning raw data into dashboards that drive decisions.", pts:25, note:"Keyword-rich and specific — exactly what ATS parsers latch onto."}
+      ]},
+      { label:'Skills', options:[
+        {t:"Good with computers and numbers.", pts:5, note:"No parseable skill keywords at all."},
+        {t:"Excel, basic SQL, data entry.", pts:15, note:"Real keywords, but entry-level and generic."},
+        {t:"SQL, Python (Pandas), Power BI, Tableau, A/B Testing, Statistical Modeling.", pts:25, note:"Dense, specific keyword list — matches job description terms directly."}
+      ]},
+      { label:'Experience', options:[
+        {t:"Worked on data stuff for the marketing team.", pts:5, note:"No quantified achievement, vague verb."},
+        {t:"Built reports for marketing team using Excel.", pts:15, note:"A real task, but no measurable impact."},
+        {t:"Automated weekly reporting for a 12-person marketing team using Python, cutting manual work by 8 hours/week.", pts:25, note:"Quantified achievement — rewarded most by Rank Score."}
+      ]},
+      { label:'Projects', options:[
+        {t:"Did a college project on data.", pts:5, note:"No detail, no tools named."},
+        {t:"Built a sales dashboard as a class project.", pts:15, note:"Concrete but still no measurable result."},
+        {t:"Built a churn-prediction model (Python, scikit-learn) that identified at-risk customers with 87% accuracy.", pts:25, note:"Named tools plus a hard metric — ideal for ATS and recruiters."}
+      ]}
+    ]},
+  { id:'dev', emoji:'💻', name:'Software Developer', desc:'Build a resume for a Software Developer role and see how it scores.',
+    sections:[
+      { label:'Summary', options:[
+        {t:"Passionate coder who loves building things.", pts:5, note:"No stack, no keywords to match a job post."},
+        {t:"Developer with experience in web development and APIs.", pts:15, note:"Generic terms, missing specific technologies."},
+        {t:"Full-stack developer specializing in React, Node.js, and REST APIs, with 2 shipped production apps.", pts:25, note:"Specific stack keywords plus a concrete claim."}
+      ]},
+      { label:'Skills', options:[
+        {t:"Coding, problem solving, teamwork.", pts:5, note:"Soft skills only — no technical keywords to parse."},
+        {t:"HTML, CSS, JavaScript, Git.", pts:15, note:"Real keywords but basic/entry-level stack."},
+        {t:"React, Node.js, TypeScript, PostgreSQL, Docker, REST & GraphQL APIs, Git/CI-CD.", pts:25, note:"Broad, specific, current stack — high overlap with SWE job posts."}
+      ]},
+      { label:'Experience', options:[
+        {t:"Fixed bugs and helped the team.", pts:5, note:"No metric, no scope, generic verb."},
+        {t:"Built new features for the company's web app.", pts:15, note:"A real contribution, but no measurable outcome."},
+        {t:"Reduced page load time by 40% by optimizing API calls and implementing lazy loading across a React app used by 50K+ monthly users.", pts:25, note:"Quantified — exactly what boosts Rank Score."}
+      ]},
+      { label:'Projects', options:[
+        {t:"Made a personal website.", pts:5, note:"No tech stack named, no scale or outcome."},
+        {t:"Built a to-do app using React.", pts:15, note:"Names a tool, but no depth or result."},
+        {t:"Built and deployed a real-time chat app (React, Socket.io, Redis) supporting 500+ concurrent users.", pts:25, note:"Specific stack plus a scale metric — strong signal."}
+      ]}
+    ]},
+  { id:'mkt', emoji:'📣', name:'Marketing Executive', desc:'Build a resume for a Marketing role and see how it scores.',
+    sections:[
+      { label:'Summary', options:[
+        {t:"Creative person who enjoys marketing and social media.", pts:5, note:"No channels, no tools, no proof of results."},
+        {t:"Marketing executive experienced in campaigns and content.", pts:15, note:"On-topic but generic — missing specific channels/tools."},
+        {t:"Marketing Executive driving SEO, paid social, and email campaigns that grew organic traffic and qualified leads.", pts:25, note:"Names real channels — high keyword match for marketing JDs."}
+      ]},
+      { label:'Skills', options:[
+        {t:"Social media, communication, creativity.", pts:5, note:"Soft skills only, no tools/platforms named."},
+        {t:"Instagram, Canva, basic SEO.", pts:15, note:"Real tools, but a thin/entry-level list."},
+        {t:"SEO, Google Analytics, Meta Ads Manager, HubSpot, Email Marketing (Mailchimp), A/B Testing.", pts:25, note:"Specific platform names — exactly what keyword-matching looks for."}
+      ]},
+      { label:'Experience', options:[
+        {t:"Managed social media for the brand.", pts:5, note:"No metric, no scale, generic verb."},
+        {t:"Ran Instagram and Facebook campaigns for the brand.", pts:15, note:"Names channels, but no measurable result."},
+        {t:"Grew Instagram following from 5K to 42K in 6 months and cut cost-per-lead by 35% via targeted Meta Ads.", pts:25, note:"Two hard numbers — pushes Rank Score up the most."}
+      ]},
+      { label:'Projects', options:[
+        {t:"Helped plan a college fest.", pts:5, note:"No channel, tool, or measurable outcome."},
+        {t:"Ran the Instagram page for a college fest.", pts:15, note:"Names a channel, but no result attached."},
+        {t:"Led social media for a college fest, growing reach by 3x and driving 1,200+ RSVPs via a targeted content calendar.", pts:25, note:"Quantified reach and conversions — strong, concrete impact."}
+      ]}
+    ]}
+];
+
+const STAGES = [
+  {icon:'⬆️', label:'Resume Upload'}, {icon:'🔍', label:'Parsing Engine'}, {icon:'🧩', label:'Skill Extraction'},
+  {icon:'🎯', label:'Job Match'}, {icon:'⭐', label:'Rank Score'}, {icon:'👤', label:'Recruiter Review'}
+];
+
+const SIM_FACTORS = [
+  { key:'keywords', label:'Relevant Keywords', sub:'Job-specific terms like "SQL" or "React" instead of generic words.' },
+  { key:'formatting', label:'Clean Formatting', sub:'Simple layout, no tables/columns that confuse the parser.' },
+  { key:'sections', label:'Standard Sections', sub:'Labeled "Experience", "Skills" etc. so the parser recognizes them.' },
+  { key:'quantified', label:'Quantified Achievements', sub:'Numbers like "cut costs 35%" instead of vague claims.' }
+];
+
+let state = { name:'', role:null, answers:[], sectionIndex:0, sim:{keywords:false,formatting:false,sections:false,quantified:false} };
+const root = document.getElementById('cardRoot');
+const navbar = document.getElementById('navbar');
+
+function renderNav(active){
+  navbar.innerHTML = `
+    <button class="nav-btn" onclick="renderNameEntry()">🏠 Home</button>
+    <button class="nav-btn" onclick="renderLeaderboard()">🏆 Leaderboard</button>
+    <button class="nav-btn" onclick="renderShare()">📱 Share / QR</button>
+  `;
+}
+
+/* ---------------- Name entry ---------------- */
+function renderNameEntry(){
+  renderNav();
+  root.innerHTML = `
+    <div class="title-block">
+      <h1>Beat the ATS 🎮</h1>
+      <p>See exactly how ATS scoring works, then build a resume section-by-section and watch it run through the real 6-stage recruiter pipeline.</p>
+    </div>
+    <label class="section-eyebrow" for="nameField">Your name</label>
+    <input id="nameField" class="name-input" placeholder="e.g. Aditi Sharma" value="${state.name}" />
+    <button class="btn btn-primary" style="width:100%" onclick="submitName()">Continue →</button>
+  `;
+  document.getElementById('nameField').addEventListener('keydown', e=>{ if(e.key==='Enter') submitName(); });
+}
+function submitName(){
+  const val = document.getElementById('nameField').value.trim();
+  if(!val){ alert('Please enter your name to continue — it goes on the leaderboard!'); return; }
+  state.name = val;
+  renderSimulator();
+}
+
+/* ---------------- Live ATS simulator ---------------- */
+function renderSimulator(){
+  renderNav();
+  const factors = SIM_FACTORS;
+  const score = factors.reduce((s,f)=> s + (state.sim[f.key] ? 25 : 0), 0);
+  const color = score>=75 ? 'var(--green)' : score>=50 ? 'var(--amber)' : 'var(--red)';
+  const verdictText = score>=85?'✅ Shortlisted for Recruiter Review'
+    : score>=60?'⚠️ Borderline — needs a bit more'
+    : score>0?'❌ Poor Fit — automatically ranked lower'
+    : '👋 Flip the switches to see what happens';
+  root.innerHTML = `
+    <div class="section-eyebrow">Hi ${state.name} 👋 · Try it yourself</div>
+    <div class="section-q">Flip these on and off — watch your Rank Score change live</div>
+    ${factors.map(f=>`
+      <div class="toggle-row">
+        <div><div class="toggle-label">${f.label}</div><div class="toggle-sub">${f.sub}</div></div>
+        <div class="switch ${state.sim[f.key]?'on':''}" onclick="toggleSim('${f.key}')"><div class="switch-knob"></div></div>
+      </div>
+    `).join('')}
+    <div class="gauge-wrap">
+      <div class="gauge-score" style="color:${color}">${score}<span style="font-size:20px;color:var(--ink-soft)">/100</span></div>
+      <div class="gauge-track"><div class="gauge-fill" style="width:${score}%; background:${color}"></div></div>
+      <div class="gauge-verdict" style="color:${color}">${verdictText}</div>
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="renderRoleSelect()">Now try it on a real resume →</button>
+  `;
+}
+function toggleSim(key){ state.sim[key] = !state.sim[key]; renderSimulator(); }
+
+/* ---------------- Role select ---------------- */
+function renderRoleSelect(){
+  renderNav();
+  state.role=null; state.answers=[]; state.sectionIndex=0;
+  root.innerHTML = `
+    <div class="title-block">
+      <h1>Choose your role</h1>
+      <p>Pick a job track. You'll write one resume section at a time.</p>
+    </div>
+    <div class="roles">
+      ${ROLES.map(r => `
+        <div class="role-btn" onclick="startRole('${r.id}')">
+          <div class="role-emoji">${r.emoji}</div>
+          <div><div class="role-name">${r.name}</div><div class="role-desc">${r.desc}</div></div>
+        </div>`).join('')}
+    </div>
+  `;
+}
+function startRole(id){ state.role = ROLES.find(r=>r.id===id); state.answers=[]; state.sectionIndex=0; renderSection(); }
+
+/* ---------------- Resume section builder ---------------- */
+function renderSection(){
+  renderNav();
+  const role = state.role, idx = state.sectionIndex, total = role.sections.length, sec = role.sections[idx];
+  const pct = Math.round((idx/total)*100);
+  root.innerHTML = `
+    <div class="progress-row"><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="progress-label">Section ${idx+1} of ${total}</div></div>
+    <div class="section-eyebrow">${role.emoji} ${role.name} · ${sec.label}</div>
+    <div class="section-q">Which ${sec.label.toLowerCase()} line goes on your resume?</div>
+    <div class="options">
+      ${sec.options.map((o,i)=>`<div class="opt" onclick="chooseOption(${i})"><div class="opt-text">"${o.t}"</div></div>`).join('')}
+    </div>
+  `;
+}
+function chooseOption(i){
+  const role = state.role, idx = state.sectionIndex, sec = role.sections[idx];
+  state.answers.push({ label: sec.label, ...sec.options[i] });
+  if(idx + 1 < role.sections.length){ state.sectionIndex++; renderSection(); } else { renderScanning(); }
+}
+
+/* ---------------- Scanning animation ---------------- */
+function renderScanning(){
+  renderNav();
+  root.innerHTML = `
+    <div class="scan-wrap">
+      <h2 style="font-size:19px;">Running your resume through the ATS…</h2>
+      <div class="pipeline" id="pipeline">
+        ${STAGES.map((s,i)=>`
+          <div class="stage"><div class="stage-circle" id="circle-${i}">${s.icon}</div><div class="stage-label">${s.label}</div></div>
+          ${i < STAGES.length-1 ? `<div class="stage-arrow" id="arrow-${i}">➜</div>` : ''}
+        `).join('')}
+      </div>
+      <div class="scan-status" id="scanStatus">Starting scan…</div>
+    </div>
+  `;
+  let i = 0;
+  const statusEl = document.getElementById('scanStatus');
+  const messages = ["Reading document structure…","Extracting text and sections…","Matching skills against job description…","Scoring relevance to the role…","Calculating rank score…","Sending to recruiter queue…"];
+  function step(){
+    if(i > 0){
+      document.getElementById(`circle-${i-1}`).classList.remove('active');
+      document.getElementById(`circle-${i-1}`).classList.add('done');
+      if(document.getElementById(`arrow-${i-1}`)) document.getElementById(`arrow-${i-1}`).classList.add('done');
+    }
+    if(i < STAGES.length){
+      document.getElementById(`circle-${i}`).classList.add('active');
+      statusEl.textContent = messages[i]; i++; setTimeout(step, 550);
+    } else { setTimeout(renderResults, 500); }
+  }
+  setTimeout(step, 300);
+}
+
+/* ---------------- Results + save to leaderboard ---------------- */
+function renderResults(){
+  renderNav();
+  const answers = state.answers;
+  const total = answers.reduce((s,a)=>s+a.pts,0);
+  const maxTotal = 25 * answers.length;
+  const scorePct = Math.round((total/maxTotal)*100);
+  let verdictClass, verdictTitle, verdictSub;
+  if(scorePct >= 85){ verdictClass='good'; verdictTitle='✅ Shortlisted for Recruiter Review'; verdictSub='Strong keyword match and quantified impact — this resume clears the ATS with room to spare.'; }
+  else if(scorePct >= 60){ verdictClass='mid'; verdictTitle='⚠️ Borderline — Needs Polish'; verdictSub='It gets through, but weaker phrasing in a few sections is costing you rank.'; }
+  else { verdictClass='bad'; verdictTitle='❌ Poor Fit — Automatically Ranked Lower'; verdictSub='Vague phrasing and missing keywords mean this resume likely never reaches a human.'; }
+  const colorFor = pts => pts>=25 ? 'var(--green)' : pts>=15 ? 'var(--amber)' : 'var(--red)';
+
+  root.innerHTML = `
+    <div class="verdict ${verdictClass}">
+      <div class="verdict-title">${verdictTitle}</div>
+      <div class="score-big">${scorePct}<span style="font-size:20px;">/100</span></div>
+      <div class="verdict-sub">${verdictSub}</div>
+    </div>
+    <div class="breakdown">
+      ${answers.map(a=>`<div class="b-row"><div class="b-label">${a.label}</div>
+        <div class="b-track"><div class="b-fill" style="width:${(a.pts/25)*100}%; background:${colorFor(a.pts)}"></div></div>
+        <div class="b-pts">${a.pts}/25</div></div>`).join('')}
+    </div>
+    <div class="tips"><h3>📋 What the ATS saw in each section</h3>
+      <ul style="padding-left:18px; margin:0;">${answers.map(a=>`<li><strong>${a.label}:</strong> ${a.note}</li>`).join('')}</ul>
+    </div>
+    <div id="saveStatus" style="font-size:12.5px; color:var(--ink-soft); margin-bottom:14px;">Saving your score…</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="renderLeaderboard()">🏆 View Leaderboard</button>
+      <button class="btn btn-ghost" onclick="startRole('${state.role.id}')">🔁 Retry this role</button>
+      <button class="btn btn-ghost" onclick="renderRoleSelect()">🎯 Try another role</button>
+    </div>
+  `;
+  saveScore(scorePct);
+}
+
+function saveScore(score){
+  const statusEl = document.getElementById('saveStatus');
+  if(!SHEET_CONFIGURED){
+    if(statusEl) statusEl.textContent = "⚠️ Leaderboard not connected yet — ask your teacher to finish setup.";
+    return;
+  }
+  const url = `${CONFIG.SHEET_API_URL}?action=save&name=${encodeURIComponent(state.name)}&role=${encodeURIComponent(state.role.name)}&score=${score}`;
+  fetch(url).then(()=>{ if(statusEl) statusEl.textContent = "✅ Score saved to the leaderboard."; })
+    .catch(()=>{ if(statusEl) statusEl.textContent = "⚠️ Couldn't save your score — check your connection."; });
+}
+
+/* ---------------- Leaderboard ---------------- */
+function renderLeaderboard(){
+  renderNav();
+  root.innerHTML = `<div class="title-block"><h1>🏆 Leaderboard</h1><p>Top scores across the class.</p></div>
+    <div id="lbBody" style="text-align:center; color:var(--ink-soft); font-size:13.5px; padding:20px 0;">Loading…</div>
+    <div class="btn-row" style="margin-top:14px;"><button class="btn btn-ghost" onclick="renderRoleSelect()">← Back to game</button></div>`;
+  if(!SHEET_CONFIGURED){
+    document.getElementById('lbBody').innerHTML = "⚠️ Leaderboard isn't connected yet. Ask your teacher to finish the Google Sheet setup.";
+    return;
+  }
+  fetch(CONFIG.SHEET_API_URL).then(r=>r.json()).then(rows=>{
+    rows.sort((a,b)=> b.score - a.score);
+    const top = rows.slice(0, 15);
+    if(top.length===0){ document.getElementById('lbBody').innerHTML = "No scores yet — be the first!"; return; }
+    document.getElementById('lbBody').innerHTML = `
+      <table class="lb-table"><thead><tr><th></th><th>Name</th><th>Role</th><th style="text-align:right;">Score</th></tr></thead>
+      <tbody>${top.map((r,i)=>`
+        <tr class="${r.name && r.name.toLowerCase()===state.name.toLowerCase() ? 'me':''}">
+          <td class="lb-rank">${i+1}</td><td>${r.name}</td><td>${r.role}</td><td style="text-align:right; font-weight:700;">${r.score}</td>
+        </tr>`).join('')}</tbody></table>`;
+  }).catch(()=>{ document.getElementById('lbBody').innerHTML = "⚠️ Couldn't load the leaderboard right now."; });
+}
+
+/* ---------------- Share / QR ---------------- */
+function renderShare(){
+  renderNav();
+  const currentUrl = window.location.href;
+  const isFile = currentUrl.startsWith('file://');
+  root.innerHTML = `
+    <div class="title-block"><h1>📱 Share this game</h1><p>Scan or share this QR so students can jump straight in.</p></div>
+    <div class="qr-box">
+      ${isFile ? `<div class="url-box">This page is open as a local file, so the QR can't point anywhere yet. Upload it to GitHub Pages or Netlify first, then reopen it from that live URL — this screen will auto-generate the right QR code.</div>`
+      : `<img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(currentUrl)}" width="260" height="260" alt="QR code" />
+         <div class="url-box">${currentUrl}</div>
+         <p style="font-size:12.5px; color:var(--ink-soft);">Right-click (or long-press) the QR code to save the image, then paste it into your PPT slide.</p>`}
+    </div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="renderRoleSelect()">← Back to game</button></div>
+  `;
+}
+
+renderNameEntry();
+</script>
+</body>
+</html>
